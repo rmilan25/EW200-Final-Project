@@ -12,6 +12,13 @@ tank_rect = tank.get_rect() #get rect attributes of tank
 tank_rect.midbottom = screen_rect.midbottom
 screen.blit(tank,tank_rect)
 
+turret_rect = pygame.Rect(198,311,5,40)
+#turret_rect.midbottom = tank_rect.midtop
+#print(turret_rect.topleft)
+turret = pygame.draw.rect(screen, (250,250,250), turret_rect) #drew turret and placed middle of tank
+
+
+
 pygame.display.flip()
 
 while True:
