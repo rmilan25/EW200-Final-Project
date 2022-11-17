@@ -1,5 +1,6 @@
 import pygame
 import sys
+import math
 
 pygame.init()
 screen = pygame.display.set_mode((400, 400)) #created surface
@@ -15,8 +16,16 @@ screen.blit(tank,tank_rect)
 
 
 start = tank_rect.midtop #start of the line
-turret = pygame.draw.line(screen, (250,250,250),start,(200,330),5)
+end = (start[0],start[1]-20) #end of line
+turret = pygame.draw.line(screen, (250,250,250),start,end,5)
 
+hypotenuse = start[1] - end[1]
+degree = 130
+radian_conversion = degree * (math.pi/180)
+new_end_x = end[0] + (hypotenuse*(math.cos(radian_conversion)))
+new_end_y = start[1] - (hypotenuse*(math.sin(radian_conversion)))
+
+turret_rotated = pygame.draw.line(screen, (250, 250, 250), start, (new_end_x,new_end_y), 5)
 
 pygame.display.flip()
 
