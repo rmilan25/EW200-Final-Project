@@ -19,17 +19,33 @@ start = tank_rect.midtop #start of the line
 end = (start[0],start[1]-20) #end of line
 turret = pygame.draw.line(screen, (250,250,250),start,end,5)
 
-hypotenuse = start[1] - end[1]
-degree = 130
-radian_conversion = degree * (math.pi/180)
-new_end_x = end[0] + (hypotenuse*(math.cos(radian_conversion)))
-new_end_y = start[1] - (hypotenuse*(math.sin(radian_conversion)))
+hypotenuse = start[1] - end[1] #fixed length of turret
+degree = 90  # initial degree
 
-turret_rotated = pygame.draw.line(screen, (250, 250, 250), start, (new_end_x,new_end_y), 5)
+paratrooper = pygame.image.load('images/person_parachute.png')
+paratrooper_rect = paratrooper.get_rect()
+screen.blit(paratrooper, (30,50))
 
-pygame.display.flip()
 
 while True:
     for event in pygame.event.get(): #listen for events
         if event.type == pygame.QUIT: #if window is closed, game quits
             sys.exit()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT:
+                degree -= 1
+            elif event.key == pygame.K_LEFT:
+                degree += 1
+
+    radian_conversion = degree * (math.pi / 180)  # convert theta to radian, math.sin takes radians
+    new_end_x = end[0] + (hypotenuse * (math.cos(radian_conversion)))  # calculate math.cos and add it to x_pos
+    new_end_y = start[1] - (
+                hypotenuse * (math.sin(radian_conversion)))  # calculate math.sin and add it to y_pos
+
+    screen.fill((0,0,0))
+    screen.blit(tank, tank_rect)
+    pygame.draw.line(screen, (250, 250, 250), start,(new_end_x, new_end_y), 5)  # rotated turret
+
+    pygame.display.flip()
+
+
