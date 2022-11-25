@@ -18,7 +18,7 @@ class Game():
         self.turret = Turret(self.tank.rect.midtop)
 
         self.helicopter = Helicopter(self.screen)
-        self.helicopter.rect.left = 300
+        self.helicopter.rect.left = self.screen_rect.width
 
         self.clock = pygame.time.Clock()
     def run_game(self):
@@ -39,6 +39,7 @@ class Game():
 
             self.screen.fill((0,0,0))
             self.tank.draw(self.screen)
+            self.helicopter.move()
             self.helicopter.draw(self.screen)
             self.turret.update()
             self.turret.draw(self.screen)
