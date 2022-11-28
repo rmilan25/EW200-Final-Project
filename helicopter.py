@@ -1,11 +1,13 @@
 import pygame
+from pygame.sprite import Sprite
 
-class Helicopter():
+class Helicopter(Sprite):
     def __init__(self, screen):
+        super(). __init__()
         self.image = pygame.image.load('images/helicopter.png') #load image
-        self.rect = self.image.get_rect()  # get rect attributes of tank
+        self.rect = self.image.get_rect()
         self.screen = screen
-    def draw(self,screen):
+    def draw(self):#Do I need this for sprite?
         self.screen.blit(self.image,self.rect)
     def move(self):
         self.rect.x -= 1
