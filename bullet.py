@@ -1,4 +1,5 @@
 import pygame
+import math
 from pygame.sprite import Sprite
 
 class Bullet(Sprite):
@@ -12,10 +13,15 @@ class Bullet(Sprite):
         self.rect.midtop = game.turret.end_pos
 
         self.y = float(self.rect.y)
+        self.x = float(self.rect.x)
+
+        self.angle = game.turret.radian_conversion
 
     def update(self):
-        self.y -= 1.0
+        self.y -= 10*math.sin(self.angle)
+        self.x += 10*math.cos(self.angle)
         self.rect.y = self.y
+        self.rect.x = self.x
 
     def draw(self, ):
         pygame.draw.rect(self.screen, self.color,self.rect)
