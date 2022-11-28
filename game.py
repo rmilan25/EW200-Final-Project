@@ -4,6 +4,7 @@ from turret import Turret
 from tank import Tank
 from helicopter import Helicopter
 from person import Person
+from bullet import Bullet
 
 class Game():
     def __init__(self):
@@ -13,15 +14,17 @@ class Game():
 
         self.screen.fill((0,0,0)) #paint the surface background
 
-        self.tank = Tank(self.screen)
+        self.tank = Tank(self)
         self.tank.rect.midbottom = self.screen_rect.midbottom
 
         self.turret = Turret(self.tank.rect.midtop)
 
-        self.helicopter = Helicopter(self.screen)
+        self.helicopter = Helicopter(self)
         self.helicopter.rect.left = self.screen_rect.width
 
-        self.person = Person(self.screen)
+        self.person = Person(self)
+
+        self.bullets = pygame.sprite.Group()
 
         self.clock = pygame.time.Clock()
     def run_game(self):
@@ -29,11 +32,19 @@ class Game():
             self.listen_to_events()
 
             self.screen.fill((0,0,0))
+
             self.tank.draw(self.screen)
+
             self.helicopter.move()
             self.helicopter.draw() #Sprite object??
+
             self.person.fall()
             self.deploy_person()
+
+            self.bullets.update()
+            for bullet in self.bullets.sprites():
+                bullet.draw()
+
             self.turret.update()
             self.turret.draw(self.screen)
 
@@ -50,6 +61,8 @@ class Game():
                     self.turret.rotate_left = True
                 elif event.key == pygame.K_q:
                     sys.exit()
+                elif event.key == pygame.K_SPACE:
+                    self.fire_bullet()
             elif event.type == pygame.KEYUP:  # listen to keyup events
                 if event.key == pygame.K_RIGHT:
                     self.turret.rotate_right = False
@@ -58,6 +71,10 @@ class Game():
 
     def deploy_person(self):
         self.person.draw_freefall()
+
+    def fire_bullet(self):
+        bullet = Bullet(self)
+        self.bullets.add(bullet)
 
 
 

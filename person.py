@@ -2,7 +2,7 @@ import pygame
 from pygame.sprite import Sprite
 
 class Person(Sprite):
-    def __init__(self, screen):
+    def __init__(self, game):
         super(). __init__()
         self.freefall_image = pygame.image.load('images/person.png') #load image
         self.parachute_image = pygame.image.load('images/person_parachute.png')
@@ -10,7 +10,7 @@ class Person(Sprite):
         self.rect_freefall = self.freefall_image.get_rect()
         self.rect_parachute = self.parachute_image.get_rect()
 
-        self.screen = screen
+        self.screen = game.screen
     def draw_freefall(self):#Do I need this for sprite?
         self.screen.blit(self.freefall_image,self.rect_freefall)
 

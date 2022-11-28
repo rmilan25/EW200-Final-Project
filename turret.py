@@ -19,6 +19,7 @@ class Turret:
         radian_conversion = self.rotation * (math.pi / 180)  # convert theta to radian, math.sin takes radianst
         x = self.position[0] + (self.hypotenuse * (math.cos(radian_conversion)))  # calculate math.cos and add it to x_pos
         y = self.position[1] - (self.hypotenuse * (math.sin(radian_conversion)))  # calculate math.sin and add it to y_pos
-        pygame.draw.line(screen, (250,250,250),self.position,(x, y),5)
+        self.end_pos = (x, y)
+        pygame.draw.line(screen, (250,250,250),self.position,(self.end_pos),5)
 
 
