@@ -22,7 +22,8 @@ class Game():
         self.helicopter = Helicopter(self)
         self.helicopter.rect.left = self.screen_rect.width
 
-        self.person = Person(self)
+        self.persons = pygame.sprite.Group()
+        self.deploy()
 
         self.bullets = pygame.sprite.Group()
 
@@ -38,15 +39,18 @@ class Game():
             self.helicopter.move()
             self.helicopter.draw() #Sprite object??
 
-            self.person.fall()
-            self.deploy_person()
-
             self.bullets.update()
             for bullet in self.bullets.sprites():
                 bullet.draw()
 
+            self.persons.draw(self.screen)
+            for person in self.persons.sprites():
+                person.fall()
+
             self.turret.update()
             self.turret.draw(self.screen)
+
+            self.collisions()
 
             pygame.display.flip()
             self.clock.tick(60)
@@ -69,9 +73,15 @@ class Game():
                 elif event.key == pygame.K_LEFT:
                     self.turret.rotate_left = False
 
-    def deploy_person(self):
-        self.person.draw_freefall()
+    def deploy(self):
+        person = Person(self)
+        self.persons.add(person)
 
+    def collisions(self):
+        collision = pygame.sprite.groupcollide(self.bullets, self.persons, True, True)
+        if collision:
+            self.bullets.empty()
+            self.deploy()
     def fire_bullet(self):
         bullet = Bullet(self)
         self.bullets.add(bullet)

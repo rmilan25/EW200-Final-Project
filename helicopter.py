@@ -10,4 +10,4 @@ class Helicopter(Sprite):
     def draw(self):#Do I need this for sprite?
         self.screen.blit(self.image,self.rect)
     def move(self):
-        self.rect.x -= 1
+        self.rect.x -= 5
