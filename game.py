@@ -43,6 +43,11 @@ class Game():
             for bullet in self.bullets.sprites():
                 bullet.draw()
 
+            for bullet in self.bullets.copy():
+                if (bullet.rect.bottom <= 0) or (bullet.rect.left == self.screen_rect.width) or \
+                        (bullet.rect.right == 0): #delete bullets past the screen
+                    self.bullets.remove(bullet)
+
             self.persons.draw(self.screen)
             for person in self.persons.sprites():
                 person.fall()

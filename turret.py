@@ -12,10 +12,9 @@ class Turret:
     def update(self):
         if self.rotate_left:
             self.rotation += ROTATION_SPEED
-            #print(self.rotation)
         elif self.rotate_right:
             self.rotation -= ROTATION_SPEED
-            #print(self.rotation)
+            print(self.rotation)
 
     def draw(self, screen):
         self.radian_conversion = self.rotation * (math.pi / 180)  # convert theta to radian, math.sin takes radianst
