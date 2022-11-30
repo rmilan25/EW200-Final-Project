@@ -10,6 +10,10 @@ from bullet import Bullet
 class Game():
     def __init__(self):
         pygame.init()
+
+        pygame.mixer.music.load('sounds/background.wav')
+        pygame.mixer.music.play(-1)
+
         self.screen = pygame.display.set_mode((700, 700)) #created surface
         self.screen_rect = self.screen.get_rect() #get rect attributes of screen
 
@@ -49,9 +53,10 @@ class Game():
                         (bullet.rect.right == 0): #delete bullets past the screen
                     self.bullets.remove(bullet)
 
-            self.persons.draw(self.screen)
             for person in self.persons.sprites():
-                person.fall()
+                person.draw_freefall()
+            for person in self.persons.sprites():
+                person.freefall()
 
             self.turret.update()
             self.turret.draw(self.screen)
@@ -73,8 +78,8 @@ class Game():
                     sys.exit()
                 elif event.key == pygame.K_SPACE:
                     self.fire_bullet()
-                    #boom = pygame.mixer.Sound('sounds/boom.wav') #sound effect for firing bullet
-                    #pygame.mixer.Sound.play(boom)
+                    boom = pygame.mixer.Sound('sounds/boom.wav') #sound effect for firing bullet
+                    pygame.mixer.Sound.play(boom)
             elif event.type == pygame.KEYUP:  # listen to keyup events
                 if event.key == pygame.K_RIGHT:
                     self.turret.rotate_right = False
@@ -85,6 +90,10 @@ class Game():
         width = random.randint(0,self.screen_rect.width)
         person = Person(self, (width, 0))
         self.persons.add(person)
+
+    #def check_height(self):
+        #for person in self.persons.sprites():
+            #if person.rect.bottom ==
 
     def collisions(self):
         collision = pygame.sprite.groupcollide(self.bullets, self.persons, True, True)
