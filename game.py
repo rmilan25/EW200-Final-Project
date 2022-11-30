@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 from turret import Turret
 from tank import Tank
 from helicopter import Helicopter
@@ -34,7 +35,7 @@ class Game():
 
             self.screen.fill((0,0,0))
 
-            self.tank.draw(self.screen)
+            self.tank.draw()
 
             self.helicopter.move()
             self.helicopter.draw() #Sprite object??
@@ -72,6 +73,8 @@ class Game():
                     sys.exit()
                 elif event.key == pygame.K_SPACE:
                     self.fire_bullet()
+                    #boom = pygame.mixer.Sound('sounds/boom.wav') #sound effect for firing bullet
+                    #pygame.mixer.Sound.play(boom)
             elif event.type == pygame.KEYUP:  # listen to keyup events
                 if event.key == pygame.K_RIGHT:
                     self.turret.rotate_right = False
@@ -79,7 +82,8 @@ class Game():
                     self.turret.rotate_left = False
 
     def deploy(self):
-        person = Person(self)
+        width = random.randint(0,self.screen_rect.width)
+        person = Person(self, (width, 0))
         self.persons.add(person)
 
     def collisions(self):
