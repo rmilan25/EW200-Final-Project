@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import time
 from turret import Turret
 from tank import Tank
 from helicopter import Helicopter
@@ -18,6 +19,8 @@ class Game():
         self.screen_rect = self.screen.get_rect() #get rect attributes of screen
 
         self.screen.fill((0,0,0)) #paint the surface background
+
+        self.lives = 3
 
         self.tank = Tank(self)
         self.tank.rect.midbottom = self.screen_rect.midbottom
@@ -57,6 +60,7 @@ class Game():
                 person.draw()
             for person in self.persons.sprites():
                 person.update()
+            self.check_bottom()
             for person in self.persons.sprites():
                 person.freefall()
 
@@ -101,6 +105,19 @@ class Game():
         if collision:
             self.bullets.empty()
             self.deploy()
+
+    def check_bottom(self):
+        for person in self.persons.sprites():
+            if person.rect.bottom >= self.screen_rect.height:
+                self.bullets.empty()
+                self.persons.empty()
+                self.lives -= 1
+                time.sleep(1.0)
+                self.deploy()
+        if self.lives == 0:
+            sys.exit()
+
+
     def fire_bullet(self):
         bullet = Bullet(self)
         self.bullets.add(bullet)
