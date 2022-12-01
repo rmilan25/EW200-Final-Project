@@ -27,11 +27,10 @@ class Game():
 
         self.turret = Turret(self.tank.rect.midtop)
 
-        self.helicopter = Helicopter(self)
-        self.helicopter.rect.left = self.screen_rect.width
+        self.helicopters = pygame.sprite.Group()
+        self.flyover()
 
         self.persons = pygame.sprite.Group()
-        self.deploy()
 
         self.bullets = pygame.sprite.Group()
 
@@ -44,8 +43,11 @@ class Game():
 
             self.tank.draw()
 
-            self.helicopter.move()
-            self.helicopter.draw() #Sprite object??
+            for helicopter in self.helicopters.sprites():
+                helicopter.draw()
+            for helicopter in self.helicopters.sprites():
+                helicopter.fly()
+            self.check_left()
 
             self.bullets.update()
             for bullet in self.bullets.sprites(): #draw bullets in group
@@ -70,7 +72,10 @@ class Game():
             self.turret.update()
             self.turret.draw(self.screen)
 
-            self.collisions()
+            self.bullet_person_collision()
+            self.bullet_helicopter_collision()
+
+            self.game_over()
 
             pygame.display.flip()
             self.clock.tick(60)
@@ -100,12 +105,20 @@ class Game():
         person = Person(self, (width, 0))
         self.persons.add(person)
 
-    def collisions(self):
+    def flyover(self):
+        helicopter = Helicopter(self, self.screen_rect.width)
+        self.helicopters.add(helicopter)
+
+    def bullet_person_collision(self):
         collision = pygame.sprite.groupcollide(self.bullets, self.persons, True, True)
         if collision:
             self.bullets.empty()
             self.deploy()
-
+    def bullet_helicopter_collision(self):
+        collision = pygame.sprite.groupcollide(self.bullets, self.helicopters, True, True)
+        if collision:
+            self.bullets.empty()
+            self.deploy()
     def check_bottom(self):
         for person in self.persons.sprites():
             if person.rect.bottom >= self.screen_rect.height:
@@ -114,10 +127,14 @@ class Game():
                 self.lives -= 1
                 time.sleep(1.0)
                 self.deploy()
+    def game_over(self):
         if self.lives == 0:
             sys.exit()
-
-
+    def check_left(self):
+        for helicopter in self.helicopters.sprites():
+            if helicopter.rect.right <= 0:
+                self.helicopters.empty()
+                self.deploy()
     def fire_bullet(self):
         bullet = Bullet(self)
         self.bullets.add(bullet)
