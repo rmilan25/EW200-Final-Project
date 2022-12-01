@@ -45,18 +45,23 @@ class Game():
             self.helicopter.draw() #Sprite object??
 
             self.bullets.update()
-            for bullet in self.bullets.sprites():
+            for bullet in self.bullets.sprites(): #draw bullets in group
                 bullet.draw()
 
             for bullet in self.bullets.copy():
-                if (bullet.rect.bottom <= 0) or (bullet.rect.left == self.screen_rect.width) or \
-                        (bullet.rect.right == 0): #delete bullets past the screen
+                if (bullet.rect.bottom <= 0) or (bullet.rect.left >= self.screen_rect.width) or \
+                        (bullet.rect.right <= 0): #delete bullets past the screen
                     self.bullets.remove(bullet)
 
             for person in self.persons.sprites():
                 person.draw()
             for person in self.persons.sprites():
+                person.update()
+            for person in self.persons.sprites():
                 person.freefall()
+
+            if random.randint(0,1000) <= 2:
+                self.deploy()
 
             self.turret.update()
             self.turret.draw(self.screen)
@@ -99,7 +104,6 @@ class Game():
     def fire_bullet(self):
         bullet = Bullet(self)
         self.bullets.add(bullet)
-
 
 
 
