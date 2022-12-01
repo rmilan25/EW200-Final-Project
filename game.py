@@ -21,6 +21,7 @@ class Game():
         self.screen.fill((0,0,0)) #paint the surface background
 
         self.lives = 3
+        self.score = 0
 
         self.tank = Tank(self)
         self.tank.rect.midbottom = self.screen_rect.midbottom
@@ -40,6 +41,8 @@ class Game():
             self.listen_to_events()
 
             self.screen.fill((0,0,0))
+
+            self.display_score()
 
             self.tank.draw()
 
@@ -112,11 +115,13 @@ class Game():
     def bullet_person_collision(self):
         collision = pygame.sprite.groupcollide(self.bullets, self.persons, True, True)
         if collision:
+            self.score += 5
             self.bullets.empty()
             self.deploy()
     def bullet_helicopter_collision(self):
         collision = pygame.sprite.groupcollide(self.bullets, self.helicopters, True, True)
         if collision:
+            self.score += 10
             self.bullets.empty()
             self.deploy()
     def check_bottom(self):
@@ -130,6 +135,11 @@ class Game():
     def game_over(self):
         if self.lives == 0:
             sys.exit()
+    def display_score(self):
+        font = pygame.font.Font('freesansbold.ttf',15)
+        score = font.render("Score :" + str(self.score), True, (255,255,255))
+        self.screen.blit(score, (5,5))
+
     def check_left(self):
         for helicopter in self.helicopters.sprites():
             if helicopter.rect.right <= 0:
