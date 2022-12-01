@@ -1,6 +1,6 @@
 import pygame
 import math
-ROTATION_SPEED = 1
+ROTATION_SPEED = 2
 class Turret:
     def __init__(self, position):
         self.position = position
@@ -10,11 +10,10 @@ class Turret:
         self.rotate_right = False
 
     def update(self):
-        if self.rotate_left:
+        if self.rotate_left and self.rotation <= 180:
             self.rotation += ROTATION_SPEED
-        elif self.rotate_right:
+        elif self.rotate_right and self.rotation >= 0:
             self.rotation -= ROTATION_SPEED
-            print(self.rotation)
 
     def draw(self, screen):
         self.radian_conversion = self.rotation * (math.pi / 180)  # convert theta to radian, math.sin takes radianst

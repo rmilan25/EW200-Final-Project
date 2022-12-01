@@ -54,7 +54,7 @@ class Game():
                     self.bullets.remove(bullet)
 
             for person in self.persons.sprites():
-                person.draw_freefall()
+                person.draw()
             for person in self.persons.sprites():
                 person.freefall()
 
@@ -90,10 +90,6 @@ class Game():
         width = random.randint(0,self.screen_rect.width)
         person = Person(self, (width, 0))
         self.persons.add(person)
-
-    #def check_height(self):
-        #for person in self.persons.sprites():
-            #if person.rect.bottom ==
 
     def collisions(self):
         collision = pygame.sprite.groupcollide(self.bullets, self.persons, True, True)
