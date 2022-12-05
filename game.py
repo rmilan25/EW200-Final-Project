@@ -15,6 +15,8 @@ class Game():
         pygame.mixer.music.load('sounds/background.wav')
         pygame.mixer.music.play(-1)
 
+        self.game_active = True
+
         self.screen = pygame.display.set_mode((700, 700)) #created surface
         self.screen_rect = self.screen.get_rect() #get rect attributes of screen
 
@@ -22,6 +24,7 @@ class Game():
 
         self.lives = 3
         self.score = 0
+        self.level = 10000 #number will decrease allowing difficulty to increase
 
         self.tank = Tank(self)
         self.tank.rect.midbottom = self.screen_rect.midbottom
@@ -40,52 +43,53 @@ class Game():
         while True:
             self.listen_to_events()
 
-            self.screen.fill((0,0,0))
+            if self.game_active:
+                #All update functions
+                for helicopter in self.helicopters.sprites():
+                    helicopter.fly()
+                for person in self.persons.sprites():
+                    person.update()
+                for person in self.persons.sprites():
+                    person.freefall()
+                self.bullets.update()
+                self.bullet_person_collision()
+                self.bullet_helicopter_collision()
+                self.turret.update()
 
-            self.display_score()
+                #check edges
+                self.check_bottom()
+                self.check_left()
+                for bullet in self.bullets.copy():
+                    if (bullet.rect.bottom <= 0) or (bullet.rect.left >= self.screen_rect.width) or \
+                            (bullet.rect.right <= 0): #delete bullets past the screen
+                        self.bullets.remove(bullet)
 
-            self.tank.draw()
+                #Draw functions
+                self.screen.fill((0, 0, 0))
+                self.turret.draw(self.screen)
+                self.tank.draw()
+                for helicopter in self.helicopters.sprites():
+                    helicopter.draw()
+                for bullet in self.bullets.sprites():
+                    bullet.draw()
+                for person in self.persons.sprites():
+                    person.draw()
 
-            for helicopter in self.helicopters.sprites():
-                helicopter.draw()
-            for helicopter in self.helicopters.sprites():
-                helicopter.fly()
-            self.check_left()
-
-            self.bullets.update()
-            for bullet in self.bullets.sprites(): #draw bullets in group
-                bullet.draw()
-
-            for bullet in self.bullets.copy():
-                if (bullet.rect.bottom <= 0) or (bullet.rect.left >= self.screen_rect.width) or \
-                        (bullet.rect.right <= 0): #delete bullets past the screen
-                    self.bullets.remove(bullet)
-
-            for person in self.persons.sprites():
-                person.draw()
-            for person in self.persons.sprites():
-                person.update()
-            self.check_bottom()
-            for person in self.persons.sprites():
-                person.freefall()
-
-            if random.randint(0,1000) <= 2:
-                self.deploy()
-
-            self.turret.update()
-            self.turret.draw(self.screen)
-
-            self.bullet_person_collision()
-            self.bullet_helicopter_collision()
+                if random.randint(0,self.level) <= 2:
+                    self.deploy()
 
             self.game_over()
-
+            self.display_score()
             pygame.display.flip()
             self.clock.tick(60)
     def listen_to_events(self):
         for event in pygame.event.get():  # listen for events
             if event.type == pygame.QUIT:  # if window is closed, game quits
                 sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.fire_bullet()
+                boom = pygame.mixer.Sound('sounds/boom.wav')  # sound effect for firing bullet
+                pygame.mixer.Sound.play(boom)
             elif event.type == pygame.KEYDOWN:  # listen to keydown events
                 if event.key == pygame.K_RIGHT:
                     self.turret.rotate_right = True
@@ -97,12 +101,17 @@ class Game():
                     self.fire_bullet()
                     boom = pygame.mixer.Sound('sounds/boom.wav') #sound effect for firing bullet
                     pygame.mixer.Sound.play(boom)
+                elif event.key == pygame.K_r:
+                    self.score = 0
+                    self.lives = 3
+                    pygame.mixer.music.play(-1)
+                    self.flyover()
+                    self.game_active = True
             elif event.type == pygame.KEYUP:  # listen to keyup events
                 if event.key == pygame.K_RIGHT:
                     self.turret.rotate_right = False
                 elif event.key == pygame.K_LEFT:
                     self.turret.rotate_left = False
-
     def deploy(self):
         width = random.randint(0,self.screen_rect.width)
         person = Person(self, (width, 0))
@@ -115,15 +124,17 @@ class Game():
     def bullet_person_collision(self):
         collision = pygame.sprite.groupcollide(self.bullets, self.persons, True, True)
         if collision:
-            self.score += 5
+            self.score += 1
             self.bullets.empty()
             self.deploy()
+            self.difficulty()
     def bullet_helicopter_collision(self):
         collision = pygame.sprite.groupcollide(self.bullets, self.helicopters, True, True)
         if collision:
-            self.score += 10
+            self.score += 2
             self.bullets.empty()
             self.deploy()
+            self.difficulty()
     def check_bottom(self):
         for person in self.persons.sprites():
             if person.rect.bottom >= self.screen_rect.height:
@@ -134,12 +145,27 @@ class Game():
                 self.deploy()
     def game_over(self):
         if self.lives == 0:
-            sys.exit()
-    def display_score(self):
+            self.persons.empty()
+            self.bullets.empty()
+            self.helicopters.empty()
+            pygame.mixer.music.stop()
+            self.game_over_screen()
+            self.game_active = False
+    def game_over_screen(self):
+        self.screen.fill((0,0,0))
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        game_over = font.render("Game Over", True, (255, 255, 255))
+        self.screen.blit(game_over, (((self.screen_rect.height)/2), ((self.screen_rect.width)/2)))
+
+    def display_score(self): #helping hand achievment, helped classmate with this code
         font = pygame.font.Font('freesansbold.ttf',15)
         score = font.render("Score :" + str(self.score), True, (255,255,255))
         self.screen.blit(score, (5,5))
-
+    def difficulty(self):
+        if ((self.score)%10) == 0 and self.score > 0:
+            self.flyover()
+            self.deploy()
+            self.level -= 100
     def check_left(self):
         for helicopter in self.helicopters.sprites():
             if helicopter.rect.right <= 0:

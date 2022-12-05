@@ -18,8 +18,8 @@ class Bullet(Sprite):
         self.angle = game.turret.radian_conversion
 
     def update(self):
-        self.y -= 10*math.sin(self.angle)
-        self.x += 10*math.cos(self.angle)
+        self.y -= 7*math.sin(self.angle)
+        self.x += 7*math.cos(self.angle)
         self.rect.y = self.y
         self.rect.x = self.x
 

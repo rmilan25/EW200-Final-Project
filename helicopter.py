@@ -12,4 +12,4 @@ class Helicopter(Sprite):
     def draw(self):
         self.screen.blit(self.image,self.rect)
     def fly(self):
-        self.rect.x -= 5
+        self.rect.x -= 3

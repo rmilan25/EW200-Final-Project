@@ -24,6 +24,6 @@ class Person(Sprite):
 
     def freefall(self):
         if self.image == self.freefall_image:
-            self.rect.y += 2
+            self.rect.y += 3
         elif self.image == self.parachute_image:
             self.rect.y += 1
