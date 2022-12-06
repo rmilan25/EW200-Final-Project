@@ -151,6 +151,12 @@ class Game():
             pygame.mixer.music.stop()
             self.game_over_screen()
             self.game_active = False
+
+        with open('high_score.txt', 'r') as file: #open text file
+                self.high_score = int(file.read()) #read the first line and set str as int for high score
+        if self.score > int(self.high_score): #allows scores to update
+            with open('high_score.txt', 'w') as file: #open txt file and write the new high score
+                self.high_score = file.write(str(self.score))
     def game_over_screen(self):
         self.screen.fill((0,0,0))
         font = pygame.font.Font('freesansbold.ttf', 32)
@@ -161,8 +167,12 @@ class Game():
         font = pygame.font.Font('freesansbold.ttf',15)
         score = font.render("Score :" + str(self.score), True, (255,255,255))
         self.screen.blit(score, (5,5))
+        font = pygame.font.Font('freesansbold.ttf', 15)
+        high_score_render = font.render("High Score :" + str(self.high_score), True, (255, 255, 255))
+        self.screen.blit(high_score_render, (5, 20))
+
     def difficulty(self):
-        if ((self.score)%10) == 0 and self.score > 0:
+        if (self.score%10) == 0 and self.score > 0:
             self.flyover()
             self.deploy()
             self.level -= 100
